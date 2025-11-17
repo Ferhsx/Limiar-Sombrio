@@ -105,6 +105,20 @@ export default function FichaPage() {
         }));
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFicha(prevFicha => ({
+            ...prevFicha,
+            [name]: value
+        }));
+    };
+
+    const handleResetFicha = () => {
+        if (window.confirm("Você tem certeza que quer apagar a ficha e começar de novo?")) {
+            setFicha(initialFichaState);
+        }
+    };
+
     return (
         <div className="bg-slate-900 text-white p-10 min-h-screen align-center">
             <h1 className="text-3xl font-bold mb-4">Criação de Personagem</h1>
@@ -161,10 +175,50 @@ export default function FichaPage() {
                 {/* COLUNA 3: DADOS DE IDENTIFICAÇÃO (ainda sem lógica) */}
                 <section>
                     <h2 className="text-2xl font-bold mb-2">Identificação</h2>
-                    <div className="space-y-2">
-                        <input type="text" placeholder="Nome" value={ficha.nome} onChange={(e) => setFicha({ ...ficha, nome: e.target.value })} />
-                        <input type="text" placeholder="Conceito" value={ficha.conceito} onChange={(e) => setFicha({ ...ficha, conceito: e.target.value })} />
-                        <input type="text" placeholder="Ocupação" value={ficha.ocupacao} onChange={(e) => setFicha({ ...ficha, ocupacao: e.target.value })} />
+                    <div className="space-y-4">
+                        <div>
+                            <label htmlFor="nome" className="block text-sm font-medium text-slate-400 mb-1">Nome do Liminar</label>
+                            <input
+                                type="text"
+                                id="nome"
+                                name="nome"
+                                value={ficha.nome}
+                                onChange={handleInputChange}
+                                className="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:ring-2 focus:ring-amber-400 outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="conceito" className="block text-sm font-medium text-slate-400 mb-1">Conceito</label>
+                            <input
+                                type="text"
+                                id="conceito"
+                                name="conceito"
+                                value={ficha.conceito}
+                                onChange={handleInputChange}
+                                className="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:ring-2 focus:ring-amber-400 outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="ocupacao" className="block text-sm font-medium text-slate-400 mb-1">Ocupação Anterior</label>
+                            <input
+                                type="text"
+                                id="ocupacao"
+                                name="ocupacao"
+                                value={ficha.ocupacao}
+                                onChange={handleInputChange}
+                                className="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:ring-2 focus:ring-amber-400 outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mt-8">
+                        <button
+                            type="button"
+                            onClick={handleResetFicha}
+                            className="w-full bg-red-800 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                        >
+                            Resetar Ficha
+                        </button>
                     </div>
                 </section>
             </div>
