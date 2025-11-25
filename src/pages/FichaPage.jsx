@@ -1,123 +1,19 @@
-import { useState, useEffect } from "react";
 import StatRow from "../components/ui/StatRow";
-
-// --- ESTADO INICIAL E CONSTANTES GLOBAIS ---
-// Podemos deixar aqui o que NÃO depende do estado da ficha
-const initialFichaState = {
-    nome: "",
-    conceito: "",
-    ocupacao: "",
-    vigor: 1,
-    agilidade: 1,
-    mente: 1,
-    espirito: 1,
-    pericias: {
-        combate: 0,
-        investigacao: 0,
-        ocultismo: 0,
-        interacao: 0,
-        sobrevivencia: 0,
-        tecnica: 0
-    },
-    vitalidadeAtual: 6, // Vigor (1) + 5
-    estilhacosAtuais: 0,
-};
-
-const atributoBaseCost = { 1: 0, 2: 1, 3: 2 };
-// Custo de perícia corrigido (nível 1 custa 1, 2 custa 2, 3 custa 3)
-const periciaBaseCost = { 0: 0, 1: 1, 2: 3, 3: 6 }; // Custo acumulado para cada nível (1=1, 2=1+2=3, 3=1+2+3=6)
+import useCharacterSystem, { initialFichaState } from "../hooks/useCharacterSystem";
 
 export default function FichaPage() {
-
-    // --- ESTADO ---
-    const [ficha, setFicha] = useState(() => {
-        const savedFicha = localStorage.getItem('limiar-ficha');
-        return savedFicha ? JSON.parse(savedFicha) : initialFichaState;
-    });
-
-    useEffect(() => {
-        localStorage.setItem('limiar-ficha', JSON.stringify(ficha));
-    }, [ficha]);
-
-    // --- CÁLCULOS (VALORES DERIVADOS) ---
-    // Agora DENTRO do componente, onde temos acesso a `ficha`
-    const pontosAtributoGastos =
-        atributoBaseCost[ficha.vigor] +
-        atributoBaseCost[ficha.agilidade] +
-        atributoBaseCost[ficha.mente] +
-        atributoBaseCost[ficha.espirito];
-    const pontosAtributoRestantes = 5 - pontosAtributoGastos;
-
-    const pontosPericiaGastos = Object.values(ficha.pericias).reduce((total, nivel) => {
-        return total + periciaBaseCost[nivel];
-    }, 0);
-    const pontosPericiaRestantes = 12 - pontosPericiaGastos;
-
-    const vitalidadeMaxima = ficha.vigor + 5;
-    const limiteEstilhacos = ficha.espirito * 2;
-
-
-    // --- FUNÇÕES DE MANIPULAÇÃO DE ESTADO (HANDLERS) ---
-    const handleAttributeChange = (attribute, change) => {
-        const currentLevel = ficha[attribute];
-        const newLevel = currentLevel + change;
-
-        if (newLevel > 3 || newLevel < 1) return;
-        // Precisamos recalcular os pontos gastos aqui para a validação
-        const futureCost = atributoBaseCost[newLevel] - atributoBaseCost[currentLevel];
-        if (change > 0 && pontosAtributoRestantes < futureCost) return;
-
-        setFicha(prevFicha => ({
-            ...prevFicha,
-            [attribute]: newLevel
-        }));
-    };
-
-    // **NOVO: LÓGICA PARA PERÍCIAS**
-    const handlePericiaChange = (pericia, change) => {
-        const currentLevel = ficha.pericias[pericia];
-        const newLevel = currentLevel + change;
-
-        // Regras de limite: Nível Máximo 3, Mínimo 0
-        if (newLevel > 3 || newLevel < 0) return;
-
-        const futureCost = periciaBaseCost[newLevel] - periciaBaseCost[currentLevel];
-        if (change > 0 && pontosPericiaRestantes < futureCost) return;
-
-        setFicha(prevFicha => ({
-            ...prevFicha,
-            pericias: {
-                ...prevFicha.pericias,
-                [pericia]: newLevel
-            }
-        }));
-    };
-
-    const handleStatusChange = (status, change) => {
-        const newValue = ficha[status] + change;
-        if (newValue < 0) return;
-        if (status === 'vitalidadeAtual' && newValue > vitalidadeMaxima) return;
-        if (status === 'estilhacosAtuais' && newValue > limiteEstilhacos) return;
-
-        setFicha(prevFicha => ({
-            ...prevFicha,
-            [status]: newValue
-        }));
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFicha(prevFicha => ({
-            ...prevFicha,
-            [name]: value
-        }));
-    };
-
-    const handleResetFicha = () => {
-        if (window.confirm("Você tem certeza que quer apagar a ficha e começar de novo?")) {
-            setFicha(initialFichaState);
-        }
-    };
+    const {
+        ficha,
+        pontosAtributoRestantes,
+        pontosPericiaRestantes,
+        vitalidadeMaxima,
+        limiteEstilhacos,
+        handleAttributeChange,
+        handlePericiaChange,
+        handleStatusChange,
+        handleInputChange,
+        handleResetFicha
+    } = useCharacterSystem(initialFichaState);
 
     return (
         <div className="bg-slate-900 text-white p-10 min-h-screen align-center">
