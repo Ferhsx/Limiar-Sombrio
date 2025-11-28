@@ -3,11 +3,12 @@ import { Routes, Route } from 'react-router-dom';
 // Crie estes arquivos vazios por enquanto nas suas respectivas pastas
 import HomePage from './pages/HomePage';
 import GrimorioPage from './pages/GrimorioPage.jsx';
-import CharacterSheetPage from './pages/CharacterSheetPage';
+import FichaPage from './pages/FichaPage';
 import MainLayout from './layouts/MainLayout';
 import LoginPage from './pages/LoginPage';
 import { useAuth } from './context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
 
 const PrivateRoute = ({ children }) => {
   const { currentUser } = useAuth();
@@ -27,9 +28,9 @@ export default function App() {
             <MainLayout />
           </PrivateRoute>
       }>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={currentUser ? <Dashboard /> : <HomePage />} />
         <Route path="/grimorio" element={<GrimorioPage />} />
-        <Route path="/ficha" element={<CharacterSheetPage />} />
+        <Route path="/ficha" element={<FichaPage />} />
       </Route>
     </Routes>
   );
