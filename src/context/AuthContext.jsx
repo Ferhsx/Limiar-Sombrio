@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../firebase/firebaseConfig'; 
+import { auth } from '../firebase/firebaseConfig';
 
 // Cria o Context
 const AuthContext = createContext();
@@ -27,7 +27,31 @@ export const AuthProvider = ({ children }) => {
 
     const loginWithGoogle = () => {
         const provider = new GoogleAuthProvider();
-        return signInWithPopup(auth, provider);
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Check if user document exists
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
+
+            if (!userDoc.exists()) {
+                // Create user document if it doesn't exist
+                await setDoc(userDocRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                    createdAt: new Date().toISOString(),
+                    // Add any other default fields you need
+                });
+            }
+
+            return result;
+        } catch (error) {
+            console.error("Error signing in with Google:", error);
+            throw error;
+        }
     };
 
     const logout = () => {
@@ -36,12 +60,27 @@ export const AuthProvider = ({ children }) => {
 
     // Efeito que roda uma vez para verificar o estado da autenticação
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, user => {
-            setCurrentUser(user);
-            setLoading(false); // Verificação concluída
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    // Update user with additional data from Firestore
+                    setCurrentUser({
+                        ...user,
+                        ...userDoc.data()
+                    });
+                } else {
+                    setCurrentUser(user);
+                }
+            } else {
+                setCurrentUser(null);
+            }
+            setLoading(false);
         });
 
-        return unsubscribe; // Limpa o listener ao desmontar o componente
+        return unsubscribe;
     }, []);
 
 
