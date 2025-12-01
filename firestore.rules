@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow users to read and write to their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Campaigns collection rules
+    match /campaigns/{campaignId} {
+      // Allow reading if the user is authenticated
+      allow read: if request.auth != null;
+      
+      // Allow create if user is authenticated
+      allow create: if request.auth != null;
+      
+      // Allow update/delete only if the user is the GM of the campaign
+      allow update, delete: if request.auth != null && 
+                          resource.data.gmId == request.auth.uid;
+      
+      // Players subcollection rules
+      match /players/{playerId} {
+        // Allow reading if authenticated
+        allow read: if request.auth != null;
+        
+        // Allow creating a player document if it's for the current user
+        allow create: if request.auth != null && 
+                     request.resource.data.userId == request.auth.uid;
+                     
+        // Allow updating if it's the player's own document or if the user is the GM
+        allow update: if request.auth != null && 
+                      (resource.data.userId == request.auth.uid || 
+                       get(/databases/$(database)/documents/campaigns/$(campaignId)).data.gmId == request.auth.uid);
+      }
+    }
+    
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

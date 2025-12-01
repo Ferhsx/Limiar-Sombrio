@@ -1,5 +1,5 @@
 import StatRow from "../components/ui/StatRow";
-import useCharacterSystem, { initialFichaState } from "../hooks/useCharacterSystem";
+import { useCharacterSystem, initialFichaState } from "../hooks/useCharacterSystem";
 
 export default function FichaPage() {
     const {
@@ -12,7 +12,9 @@ export default function FichaPage() {
         handlePericiaChange,
         handleStatusChange,
         handleInputChange,
-        handleResetFicha
+        handleResetFicha,
+        handleOccupationChange,
+        ocupacoes,
     } = useCharacterSystem(initialFichaState);
 
     return (
@@ -96,14 +98,19 @@ export default function FichaPage() {
                         </div>
                         <div>
                             <label htmlFor="ocupacao" className="block text-sm font-medium text-slate-400 mb-1">Ocupação Anterior</label>
-                            <input
-                                type="text"
+                            <select
                                 id="ocupacao"
-                                name="ocupacao"
                                 value={ficha.ocupacao}
-                                onChange={handleInputChange}
+                                onChange={(e) => handleOccupationChange(e.target.value)}
                                 className="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:ring-2 focus:ring-amber-400 outline-none"
-                            />
+                            >
+                                <option value="">Selecione uma ocupação</option>
+                                {ocupacoes.map((opcao) => (
+                                    <option key={opcao.titulo} value={opcao.titulo}>
+                                        {opcao.titulo}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 

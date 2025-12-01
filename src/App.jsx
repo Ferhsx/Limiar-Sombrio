@@ -9,6 +9,8 @@ import LoginPage from './pages/LoginPage';
 import { useAuth } from './context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
+import CampaignLobby from './pages/CampaignLobby';
+import CampaignSheetCreator from './pages/CampaignSheetCreator';
 
 const PrivateRoute = ({ children }) => {
   const { currentUser } = useAuth();
@@ -31,6 +33,8 @@ export default function App() {
         <Route path="/" element={currentUser ? <Dashboard /> : <HomePage />} />
         <Route path="/grimorio" element={<GrimorioPage />} />
         <Route path="/ficha" element={<FichaPage />} />
+        <Route path="/campaign/:id" element={<CampaignLobby />} />
+        <Route path="/campaign/:id/create-sheet" element={<CampaignSheetCreator />} />
       </Route>
     </Routes>
   );

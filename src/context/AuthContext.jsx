@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../firebase/firebaseConfig';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/firebaseConfig';
 
 // Cria o Context
 const AuthContext = createContext();
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }) => {
         return signInWithEmailAndPassword(auth, email, password);
     };
 
-    const loginWithGoogle = () => {
+    const loginWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth, provider);

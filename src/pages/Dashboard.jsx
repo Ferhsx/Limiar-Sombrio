@@ -119,7 +119,8 @@ export default function Dashboard() {
                                     <p className="text-lg font-mono text-amber-400 tracking-widest select-all">{camp.inviteCode}</p>
                                 </div>
 
-                                <button className="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded transition-colors">
+                                <button onClick={() => navigate(`/campaign/${camp.id}`)} 
+                                className="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded transition-colors">
                                     Gerenciar Mesa
                                 </button>
                             </div>

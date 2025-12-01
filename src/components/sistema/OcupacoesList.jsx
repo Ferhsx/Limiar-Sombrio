@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ocupacoes = [
+export const ocupacoes = [
   {
     titulo: "Acadêmico (História/Antropologia/Folclore)",
     pericia: "+1 Ocultismo",
