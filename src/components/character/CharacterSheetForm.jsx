@@ -7,10 +7,12 @@ export default function CharacterSheetForm({
     handleAttributeChange, 
     handlePericiaChange, 
     handleStatusChange,
+    handleOccupationChange,
     pontosAtributoRestantes,
     pontosPericiaRestantes,
     vitalidadeMaxima,
-    limiteEstilhacos
+    limiteEstilhacos,
+    ocupacoes = []
 }) {
     return (
         <div className="text-slate-200">
@@ -81,7 +83,19 @@ export default function CharacterSheetForm({
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-1">Ocupação</label>
-                            <input type="text" name="ocupacao" value={ficha.ocupacao} onChange={handleInputChange} className="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:ring-2 focus:ring-amber-400 outline-none" />
+                            <select
+                                name="ocupacao"
+                                value={ficha.ocupacao}
+                                onChange={(e) => handleOccupationChange(e.target.value)}
+                                className="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:ring-2 focus:ring-amber-400 outline-none"
+                            >
+                                <option value="">Selecione uma ocupação</option>
+                                {ocupacoes.map((ocupacao) => (
+                                    <option key={ocupacao.titulo} value={ocupacao.titulo}>
+                                        {ocupacao.titulo}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                      </div>
                 </section>

@@ -1,21 +1,5 @@
 import React from 'react';
-import {
-    Capitulo1,
-    Capitulo2,
-    Capitulo3,
-    Capitulo4,
-    Capitulo5,
-    Capitulo6,
-    Capitulo7,
-    Capitulo8,
-    Capitulo9,
-    Capitulo10,
-    Capitulo11,
-    Capitulo12,
-    Capitulo13,
-    Capitulo14,
-} from '../components/sistema';
-
+import { capitulos } from '../components/sistema/capitulos';
 import TableOfContents from '../components/TableOfContents';
 
 export default function GrimorioPage() {
@@ -43,20 +27,9 @@ export default function GrimorioPage() {
 
                 <div className="lg:col-span-3">
                     <div className="space-y-12">
-                        <Capitulo1 />
-                        <Capitulo2 />
-                        <Capitulo3 />
-                        <Capitulo4 />
-                        <Capitulo5 />
-                        <Capitulo6 />
-                        <Capitulo7 />
-                        <Capitulo8 />
-                        <Capitulo9 />
-                        <Capitulo10 />
-                        <Capitulo11 />
-                        <Capitulo12 />
-                        <Capitulo13 />
-                        <Capitulo14 />
+                        {capitulos.map((Capitulo, index) => (
+                            <Capitulo key={index} />
+                        ))}
                     </div>
                 </div>
             </div>

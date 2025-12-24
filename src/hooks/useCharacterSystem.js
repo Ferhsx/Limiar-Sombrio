@@ -15,13 +15,13 @@ export function useCharacterSystem(initialData = null) {
     const [ficha, setFicha] = useState(initialData || initialFichaState);
 
     // Cálculos
-    const pontosAtributoGastos = 
-        atributoBaseCost[ficha.vigor] + atributoBaseCost[ficha.agilidade] + 
+    const pontosAtributoGastos =
+        atributoBaseCost[ficha.vigor] + atributoBaseCost[ficha.agilidade] +
         atributoBaseCost[ficha.mente] + atributoBaseCost[ficha.espirito];
-    const pontosAtributoRestantes = 5 - pontosAtributoGastos;
-
+    const pontosAtributoRestantes = Math.max(0, 5 - pontosAtributoGastos);
+    
     const pontosPericiaGastos = Object.values(ficha.pericias).reduce((acc, val) => acc + periciaBaseCost[val], 0);
-    const pontosPericiaRestantes = 12 - pontosPericiaGastos;
+    const pontosPericiaRestantes = Math.max(0, 12 - pontosPericiaGastos);
 
     const vitalidadeMaxima = ficha.vigor + 5;
     const limiteEstilhacos = ficha.espirito * 2;
@@ -32,7 +32,7 @@ export function useCharacterSystem(initialData = null) {
     const handleOccupationChange = (occupation) => {
         setFicha(prev => ({ ...prev, ocupacao: occupation }));
     };
-    
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFicha(prev => ({ ...prev, [name]: value }));

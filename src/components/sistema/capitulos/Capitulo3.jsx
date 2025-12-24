@@ -1,5 +1,5 @@
 import React from 'react';
-import OcupacoesList from './OcupacoesList';
+import OcupacoesList from '../OcupacoesList';
 
 const Capitulo3 = () => {
   return (

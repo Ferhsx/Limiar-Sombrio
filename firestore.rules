@@ -32,6 +32,20 @@ service cloud.firestore {
                       (resource.data.userId == request.auth.uid || 
                        get(/databases/$(database)/documents/campaigns/$(campaignId)).data.gmId == request.auth.uid);
       }
+      
+      // Premade sheets subcollection rules
+      match /premade_sheets/{sheetId} {
+        // Allow reading if authenticated
+        allow read: if request.auth != null;
+        
+        // Allow creating/updating if the user is the GM of the campaign
+        allow create, update: if request.auth != null && 
+                             get(/databases/$(database)/documents/campaigns/$(campaignId)).data.gmId == request.auth.uid;
+        
+        // Allow deleting if the user is the GM of the campaign
+        allow delete: if request.auth != null && 
+                     get(/databases/$(database)/documents/campaigns/$(campaignId)).data.gmId == request.auth.uid;
+      }
     }
     
     // Default deny all other access
